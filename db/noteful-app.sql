@@ -1,3 +1,5 @@
+-- psql -U dev -d noteful-app -f ./db/noteful-app.sql
+
 DROP TABLE IF EXISTS notes_tags;
 DROP TABLE IF EXISTS tags;
 DROP TABLE IF EXISTS notes;
@@ -24,6 +26,8 @@ CREATE TABLE notes (
   content text,
   created timestamp DEFAULT now(),
   folder_id int REFERENCES folders(id) ON DELETE SET NULL
+  tag_name int REFERENCES tags(name) ON DELETE SET NULL
+  tag_id int REFERENCES tags(id) ON DELETE SET NULL
 );
 
 ALTER SEQUENCE notes_id_seq RESTART WITH 1000;

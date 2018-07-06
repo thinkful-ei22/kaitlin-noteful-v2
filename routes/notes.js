@@ -7,13 +7,19 @@ const router = express.Router();
 
 const knex = require('../knex');
 
+// IMPORT HYDRATION MODULE
+
+const hydrateNotes = require('../utils/hydrateNotes');
+
 // Get All (and search by query)
 router.get('/', (req, res, next) => {
   const { searchTerm, folderId } = req.query;
 
-  knex.select('notes.id', 'title', 'content', 'folders.id as folderId', 'folders.name as folderName')
+  knex.select('notes.id', 'title', 'content', 'folders.id as folderId', 'folders.name as folderName', 'tags.id as tagId', 'tags.name as tagName')
     .from('notes')
     .leftJoin('folders', 'notes.folder_id', 'folders.id')
+    .leftJoin('notes_tags', 'notes.id', 'notes_tags.note_id')
+    .leftJoin('tags', 'notes_tags.tag_id', 'tags.id')
     .modify(function (queryBuilder) {
       if (searchTerm) {
         queryBuilder.where('title', 'like', `%${searchTerm}%`);
@@ -27,7 +33,12 @@ router.get('/', (req, res, next) => {
     })
     .orderBy('notes.id')
     .then(results => {
-      res.json(results);
+      if(results) {
+        const hydrated = hydrateNotes(results);
+        res.json(hydrated);
+      } else {
+        next();
+      }
     })
     .catch(err => next(err));
 });
