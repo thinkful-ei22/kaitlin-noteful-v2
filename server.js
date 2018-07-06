@@ -8,6 +8,7 @@ const { PORT } = require('./config');
 
 const notesRouter = require('./routes/notes');
 const foldersRouter = require('./routes/folders');
+const tagsRouter = require('./routes/tags');
 
 // Create an Express application
 const app = express();
@@ -29,6 +30,9 @@ app.use('/api/notes', notesRouter);
 
 // Mount folders router on "/foders"
 app.use('/api/folders', foldersRouter);
+
+// Mount folders router on "/tags"
+app.use('/api/tags', tagsRouter);
 
 // Custom 404 Not Found route handler
 app.use((req, res, next) => {

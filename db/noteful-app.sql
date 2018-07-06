@@ -1,4 +1,8 @@
+DROP TABLE IF EXISTS notes_tags;
+DROP TABLE IF EXISTS tags;
+DROP TABLE IF EXISTS notes;
 DROP TABLE IF EXISTS folders;
+
 
 CREATE TABLE folders (
     id serial PRIMARY KEY,
@@ -13,12 +17,6 @@ INSERT INTO folders (name) VALUES
   ('Personal'),
   ('Work')
 ;
-
-DROP TABLE IF EXISTS notes;
-
--- CREATE SEQUENCE notes_sequence
---     start 1000
---     increment 1;
 
 CREATE TABLE notes (
   id serial PRIMARY KEY,
@@ -42,5 +40,36 @@ INSERT INTO notes
     ('3 things to learn from cats on saturday morning', '#7. Cats hate baths.', 103)
 ;
 
--- (nextval('notes_sequence'), '5 things to learn from cats on saturday', '#5. They are always hungry.'),
-    -- (id, title, content)
+
+CREATE TABLE tags (
+    id serial PRIMARY KEY,
+    name text NOT NULL UNIQUE
+);
+
+INSERT INTO tags
+    (name)
+    VALUES 
+    ('animals'),
+    ('sunday'),
+    ('friday'),
+    ('saturday')
+;
+
+CREATE TABLE notes_tags (
+  note_id INTEGER NOT NULL REFERENCES notes ON DELETE CASCADE,
+  tag_id INTEGER NOT NULL REFERENCES tags ON DELETE CASCADE
+);
+
+INSERT INTO notes_tags
+    (note_id, tag_id)
+    VALUES 
+    (1000, 1),
+    (1000, 2),
+    (1003, 3),
+    (1004, 4)
+;
+
+SELECT title, tags.name, folders.name FROM notes
+LEFT JOIN folders ON notes.folder_id = folders.id
+LEFT JOIN notes_tags ON notes.id = notes_tags.note_id
+LEFT JOIN tags ON notes_tags.tag_id = tags.id;
