@@ -63,7 +63,7 @@ router.get('/:id', (req, res, next) => {
     .then(item => {
       if (item) {
         const hydrated = hydrateNotes(item);
-        res.json(hydrated);
+        res.json(hydrated[0]);
       } else {
         next();
       }
@@ -121,7 +121,7 @@ router.put('/:id', (req, res, next) => {
     .then(result => {
       if (result) {
         const hydrated = hydrateNotes(result);
-        res.status(201).json(hydrated);
+        res.status(201).json(hydrated[0]);
       } else {
         next();
       }
@@ -176,7 +176,7 @@ router.post('/', (req, res, next) => {
       // HYDRATE the results
       if(result) {
         const hydrated = hydrateNotes(result);
-        res.location(`${req.originalUrl}/${hydrated.id}`).status(201).json(hydrated);
+        res.location(`${req.originalUrl}/${hydrated.id}`).status(201).json(hydrated[0]);
       } else {
         next();
       }
